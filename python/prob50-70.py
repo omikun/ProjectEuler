@@ -149,27 +149,72 @@ def prob59_orig():
     print sum(map(ord, msg))
 
 #prob59()
-
+import math
 import itertools
+
+
+@memoize
+def isPrime(n):
+    if n == 1:
+        return True
+    for i in xrange(2, int(math.sqrt(n))+1):
+        if n % i == 0:
+            return False
+    return True
+                
+@memoize
 def next_prime(n):
     while True:
-        if isPrime(i):
-            return i
-        i += 1
-        
-def fap(numPrimes, maxVal):
+        if isPrime(n):
+            return n
+        n += 1
+       
+def fap(numPrimes, maxVal, depth=1):
     'iterate across all permutations of 5 primes under maxVal'
-    fivePrimes = [2, 3, 5, 7, 9]
-    yield fivePrimes
-    for i in xrange(len(fivePrimes)):
-        while True:
-            fivePrimes[i] = next_prime(fivePrimes[i])
-            if fivePrimes[i] > maxVal:
-                break;
+    if depth == 0:
+        yield
+    while numPrimes[depth-1] < maxVal:
+        np = next_prime(numPrimes[depth-1])
+        numPrimes[depth-1] = np
+        if depth > 0:
+            numPrimes[depth-2] = np
+        for i in fap(numPrimes, maxVal, depth - 1):
+            yield i
 
+def ig(l, d, maxVal):
+    'iterative generator of all permu of val [1,maxVal] for d set'
+    for i in xrange(d):
+        1
+def rg(l, d, maxVal):
+    'recursive generator of all permu of 1,maxVal] for d size set'
+    if d > 0:
+        r = rg(l, d-1, maxVal)
+    while l[d] < maxVal:
+        l[d] += 1
+        if d > 0:
+            l[d-1] = l[d]
+            r.next()
+        yield 
+        
+def gen():
+    for i in xrange(5):
+        yield i
+    
 def prob60():
     'prime pair sets: a set of 5 primes that, when any pair are concatenated in any order, also results in a prime'
-    fap(5, 1000)
-    for a in xrange(1, )
+    primeSet = [2, 3, 5, 7, 9]
+    f = fap(primeSet, 1000, 5)
+    for i in xrange(3):
+        f.next()
+        print primeSet
+    
     #iterate across primes for a set of 5
     #check all concatenated pairs are also prime
+    
+#prob60()
+l = [0, 0, 0, 0]
+print 'before rg'
+r = rg(l, 3, 30)
+for i in xrange(5):
+    r.next()
+    print 'printing: ', l
