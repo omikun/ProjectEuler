@@ -181,25 +181,46 @@ def fap(numPrimes, maxVal, depth=1):
         for i in fap(numPrimes, maxVal, depth - 1):
             yield i
 
-def ig(l, d, maxVal):
-    'iterative generator of all permu of val [1,maxVal] for d set'
-    for i in xrange(d):
-        1
-def rg(l, d, maxVal):
-    'recursive generator of all permu of 1,maxVal] for d size set'
-    if d > 0:
-        r = rg(l, d-1, maxVal)
-    while l[d] < maxVal:
-        l[d] += 1
-        if d > 0:
-            l[d-1] = l[d]
-            r.next()
-        yield 
+       
+def gen(l, maxVal):
+    #assume properly initialized
+    p = 0
+    d = len(l)
+    while True:
+        l[p] += 1
+        if p == d - 1:
+            yield
+        if l[p] > maxVal:
+            if p == 0:
+                return # done!
+            else:       #backtrack
+                p -= 1
+        else:
+            if p+1 < d: #inc next number
+                p += 1
+                l[p] = l[p-1]
+
+def rec(l, maxVal, p):
+    d = len(l)
+    if p == 0:
+        print "done!"
+        return
+    if (l[p-1] > maxVal):
+        rec(l, maxVal, p - 1)
+    l[p-1] += 1
+    l[p] = l[p-1] + 1
+
+def gen2(l, maxVal):
+    p = 0
+    d = len(l)
+    while True:
+        l[p] += 1
+        if l[p] > maxVal:
+            rec(l, maxVal, p)
+        p += 1
+        if p == d:
+            p -= 1
         
-def gen():
-    for i in xrange(5):
-        yield i
-    
 def prob60():
     'prime pair sets: a set of 5 primes that, when any pair are concatenated in any order, also results in a prime'
     primeSet = [2, 3, 5, 7, 9]
@@ -212,9 +233,8 @@ def prob60():
     #check all concatenated pairs are also prime
     
 #prob60()
-l = [0, 0, 0, 0]
-print 'before rg'
-r = rg(l, 3, 30)
-for i in xrange(5):
-    r.next()
-    print 'printing: ', l
+l = [0, 0, 0]
+g = gen(l, 10)
+for i in xrange(20):
+    g.next()
+    print l
