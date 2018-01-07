@@ -149,12 +149,19 @@ def prob59_orig():
     print sum(map(ord, msg))
 
 #prob59()
+
 import math
 import itertools
-
+def memoize(f):
+    m = {}
+    def helper(x):
+        if x not in m:
+            m[x] = f(x)
+        return m[x]
+    return helper
 
 @memoize
-def isPrime(n):
+def isPrime(n): #optimization: divide by known primes b4 linear search
     if n == 1:
         return True
     for i in xrange(2, int(math.sqrt(n))+1):
@@ -164,77 +171,37 @@ def isPrime(n):
                 
 @memoize
 def next_prime(n):
+    n += 1
     while True:
         if isPrime(n):
             return n
         n += 1
-       
-def fap(numPrimes, maxVal, depth=1):
-    'iterate across all permutations of 5 primes under maxVal'
-    if depth == 0:
-        yield
-    while numPrimes[depth-1] < maxVal:
-        np = next_prime(numPrimes[depth-1])
-        numPrimes[depth-1] = np
-        if depth > 0:
-            numPrimes[depth-2] = np
-        for i in fap(numPrimes, maxVal, depth - 1):
-            yield i
-
-       
-def gen(l, maxVal):
-    #assume properly initialized
-    p = 0
-    d = len(l)
-    while True:
-        l[p] += 1
-        if p == d - 1:
-            yield
-        if l[p] > maxVal:
-            if p == 0:
-                return # done!
-            else:       #backtrack
-                p -= 1
-        else:
-            if p+1 < d: #inc next number
-                p += 1
-                l[p] = l[p-1]
-
-def rec(l, maxVal, p):
-    d = len(l)
-    if p == 0:
-        print "done!"
-        return
-    if (l[p-1] > maxVal):
-        rec(l, maxVal, p - 1)
-    l[p-1] += 1
-    l[p] = l[p-1] + 1
-
-def gen2(l, maxVal):
-    p = 0
-    d = len(l)
-    while True:
-        l[p] += 1
-        if l[p] > maxVal:
-            rec(l, maxVal, p)
-        p += 1
-        if p == d:
-            p -= 1
         
-def prob60():
-    'prime pair sets: a set of 5 primes that, when any pair are concatenated in any order, also results in a prime'
-    primeSet = [2, 3, 5, 7, 9]
-    f = fap(primeSet, 1000, 5)
-    for i in xrange(3):
-        f.next()
-        print primeSet
-    
-    #iterate across primes for a set of 5
-    #check all concatenated pairs are also prime
-    
-#prob60()
-l = [0, 0, 0]
-g = gen(l, 10)
-for i in xrange(20):
-    g.next()
-    print l
+def isPrimePair(a, b):
+    return isPrime(int(str(a) + str(b))) and isPrime(int(str(b) + str(a)))
+
+def isPrimeSet(l):
+    'compare all permutations of prime set'
+    for i in xrange(len(l)-1):
+        for j in xrange(i+1, len(l)):
+            if not isPrimePair(l[i], l[j]):
+                return False
+    return True
+#idea: start with 1 prime, find next highest prime, repeat until have 5
+def prob60(n=5):
+    'prime pair sets: sum n primes that are all pair-wise primes'
+    testSet = [1,2]
+    while True:
+        while not isPrimeSet(testSet):
+            if testSet[0] > 10000: #max value to test is 10,000
+                testSet.pop(0)        
+            testSet[0] = next_prime(testSet[0])
+        else:
+            if len(testSet) >= n:
+                break
+            testSet.insert(0, next_prime(testSet[0]))
+
+    print 'found them all: ', testSet, 
+    return sum(testSet)
+l = prob60()
+
