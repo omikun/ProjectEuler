@@ -28,7 +28,7 @@ def namesScores():
     #compute sum of each name * rank
     return sum((names.index(i)+1)*sum(ord(j)-ord('A') for j in i) for i in names)
         
-print namesScores()
+#print namesScores()
 
 
 def prob24():
