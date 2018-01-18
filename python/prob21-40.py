@@ -299,4 +299,58 @@ def is_trunctable_prime(n):
     rl = len([i for i in xrange(len(s)) if isPrime(int(s[:l-i])) ]) == l
     return lr and rl
 
-prob37()
+#prob37()
+
+def prob38():
+    'find maximum 9 digit pandigital product between an integer and 1,2,...,n'
+    print max(pandigital(i) for i in xrange(1, 100000))
+
+def pandigital(n):
+    maxp = 987654321 #max 9 digit pandigital
+    s = ''
+    i = 1
+    while True:
+        t = s + str(n * i) 
+        if int(t) >= maxp:
+            break
+        s = t
+        i += 1
+    ss = ''.join(sorted(s))
+    if ss == '123456789':
+        print s, ss
+        return int(s)
+    else:
+        return 0
+
+#prob38()
+
+def prob39():
+    'given perimeter p, find sides of a right triangle with integral sides'
+    p = 120
+    #print get_sides(p)
+    print max(((p, len(get_sides(p))) for p in xrange(5, 1001)), key=lambda e: e[1])
+
+def get_sides(p):
+    l = []
+    for a in xrange(1, p // 2):
+        for b in xrange(a+1, p-a):
+            c = p - a - b
+            if c ** 2 == a**2 + b**2:
+                l.append((a,b,c))
+    return l
+#prob39()
+def prob40():
+    count = 0
+    ndigit = 0
+    product = 1
+    for i in xrange(7):
+        n = 10 ** i
+        while True:
+            count += 1
+            ndigit += len(str(count))
+            if ndigit >= n:
+                product *= int(str(count)[len(str(count))-1 - (ndigit - n)])
+                break
+    print product
+
+prob40()
